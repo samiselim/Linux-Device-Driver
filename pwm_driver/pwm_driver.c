@@ -9,7 +9,7 @@ MODULE_AUTHOR("Sami Abdelaziz Selim");
 MODULE_LICENSE("Dual BSD/GPL");
 
 
-/****** You Must Enable PWM for Raspberry pi 
+/****** You Must Enable PWM Device Tree for Raspberry pi 
  * go to /boot/config.txt
  * Add (dtoverlay=pwm-2chan,pin=12,func=4,pin2=13,func2=4) to this file 
 */
@@ -17,6 +17,7 @@ MODULE_LICENSE("Dual BSD/GPL");
 
 #define PWM_CHANNEL 0
 #define SIZE 255
+#define Pwm_Period 1000000000
 
 struct class * my_class;
 struct device * my_device;
@@ -26,7 +27,8 @@ static unsigned char Data[SIZE] = "";
 
 static struct pwm_device *pwm_dev;
 u32 pwm_ton = 500000000; //500 MHZ
-//u32 pwm_period = 1000000000; // 1 GHZ
+unsigned long value;
+
 
 
 
@@ -67,7 +69,6 @@ ssize_t Driver_Read (struct file *file, char __user * user_buffer, size_t count,
     kfree(print_buffer);
 
     return (ssize_t)count;
-
 }
 ssize_t Driver_Write(struct file *file, const char __user *user_buffer, size_t count, loff_t *offset)
 {
@@ -80,13 +81,29 @@ ssize_t Driver_Write(struct file *file, const char __user *user_buffer, size_t c
     if (count > remaining_bytes)
         count = remaining_bytes;  // Don't write more than what's available.
 
+    /*************** We will take duty cycle of the PWM from the user  *********/
+    /***** Convert String which the user Enter it to Integger *********/
 
-    if (copy_from_user(&Data[*offset], user_buffer, count))
-        return -1;  // Error copying data from user space.
+    /*Args
+    * 1) String Data 
+    * 2) count of Characters
+    * 3) Base Number ex: 0x --> hexa -- 0b --> binary -- 0 which automatic Detect 
+    */
+    if(kstrtol_from_user(user_buffer , count-1 , 0 , &value) != 0)
+        return -1;
+
+    printk("New Duty Cycle in Milli_S : %ld\n" , value);
     *offset += count;  // Update the file position.
 
-
-    printk("Data was Written  : %s\n" , Data);
+    if(value > (Pwm_Period/1000000))
+    {
+        printk( KERN_ERR "Invalid Duty Cycle Enter Value less than PWM Period\n");
+    }
+    else
+    {
+        pwm_config(pwm_dev , value*1000000 , Pwm_Period);    
+    }
+    
     return (ssize_t)count;
 
 }
@@ -139,7 +156,7 @@ static int pwm_init(void)
         printk( KERN_ERR "Failed to request PWM channel %d\n", PWM_CHANNEL);
         goto PWM_ERROR;
     }
-    pwm_config(pwm_dev , pwm_ton ,1000000000);
+    pwm_config(pwm_dev , pwm_ton ,Pwm_Period);
     pwm_enable(pwm_dev);
    
     printk("PWM Device Driver Created Successfully \n");

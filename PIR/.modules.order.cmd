@@ -1,0 +1,1 @@
+cmd_/home/pi/Desktop/Clonning_Dir/Linux-Device-Driver/PIR/modules.order := {   echo /home/pi/Desktop/Clonning_Dir/Linux-Device-Driver/PIR/PIR.ko; :; } > /home/pi/Desktop/Clonning_Dir/Linux-Device-Driver/PIR/modules.order

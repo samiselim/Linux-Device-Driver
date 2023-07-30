@@ -1,0 +1,1 @@
+cmd_/home/pi/Desktop/Clonning_Dir/Linux-Device-Driver/PIR/PIR.ko := ld -r -EL  -maarch64elf -z noexecstack --build-id=sha1  -T scripts/module.lds -o /home/pi/Desktop/Clonning_Dir/Linux-Device-Driver/PIR/PIR.ko /home/pi/Desktop/Clonning_Dir/Linux-Device-Driver/PIR/PIR.o /home/pi/Desktop/Clonning_Dir/Linux-Device-Driver/PIR/PIR.mod.o;  true

@@ -1,0 +1,1 @@
+cmd_/home/pi/Desktop/Clonning_Dir/Linux-Device-Driver/PIR/Module.symvers :=  sed 's/ko$$/o/'  /home/pi/Desktop/Clonning_Dir/Linux-Device-Driver/PIR/modules.order | scripts/mod/modpost -m -a    -o /home/pi/Desktop/Clonning_Dir/Linux-Device-Driver/PIR/Module.symvers -e -i Module.symvers -T - 

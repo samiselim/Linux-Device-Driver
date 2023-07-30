@@ -6,7 +6,7 @@
 #include <linux/gpio.h>
 
 #define SIZE 3
-#define LED_PIN_NUM 17
+#define LED_PIN_NUM 23
 #define Btn_PIN_NUM 3
 
 MODULE_LICENSE("GPL");
@@ -36,8 +36,6 @@ ssize_t Driver_Read (struct file *file, char __user * user_buffer, size_t count,
     int remaining_bytes;
     char *print_buffer;
     char tmp[3]="";
-    printk(KERN_INFO "------ Reading Data ----- \n");
-
     remaining_bytes = SIZE - *offset;
     if (remaining_bytes <= 0)
         return 0;  // End of file reached.
@@ -65,7 +63,7 @@ ssize_t Driver_Read (struct file *file, char __user * user_buffer, size_t count,
 
     print_buffer[count] = '\0';  // Null-terminate the string.
     
-    printk(KERN_INFO "Read data: %s\n", print_buffer);
+    printk(KERN_INFO "Data read : %s\n", print_buffer);
     kfree(print_buffer);
 
     return (ssize_t)count;
@@ -74,7 +72,6 @@ ssize_t Driver_Read (struct file *file, char __user * user_buffer, size_t count,
 ssize_t Driver_Write(struct file *file, const char __user *user_buffer, size_t count, loff_t *offset)
 {
     int remaining_bytes;
-    printk(KERN_INFO "------ Writing Data ----- \n");
 
     remaining_bytes = SIZE - *offset;
     if (remaining_bytes <= 0)
@@ -97,7 +94,7 @@ ssize_t Driver_Write(struct file *file, const char __user *user_buffer, size_t c
             break;
     }
 
-    printk("Data was Written  : %s\n" , Data);
+    printk("Data Written  : %s\n" , Data);
     return (ssize_t)count;
 
 }
@@ -141,23 +138,23 @@ static int __init DD_HelloWorld(void)
     }
 
     /*  Creating Driver Class dev file */
-    if((my_class = class_create("test_class")) == NULL)
+    if((my_class = class_create( THIS_MODULE, "test_class")) == NULL)
     {
         printk("Device Can't be created !\n");
         goto CLASS_ERROR; 
-        return -1;
+        
     }
     my_device = device_create(my_class , NULL , device_number , NULL , "SamiGPIO_Dev");
     if(my_device == NULL)
     {
         printk("Device class Can't be created \n");
         goto DEVICE_ERROR;
-        return -1;
+      
     }
     printk("Device Driver Created Successfully \n");
 
    
-    if(gpio_request(LED_PIN_NUM , "GPIO17"))
+    if(gpio_request(LED_PIN_NUM , "GPIO23"))
     {
         printk(KERN_ERR "Can not request LED PIN\n");
         goto GPIO_REQ_ERROR;

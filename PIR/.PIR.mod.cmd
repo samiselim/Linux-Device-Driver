@@ -1,0 +1,1 @@
+cmd_/home/pi/Desktop/Clonning_Dir/Linux-Device-Driver/PIR/PIR.mod := printf '%s\n'   PIR.o | awk '!x[$$0]++ { print("/home/pi/Desktop/Clonning_Dir/Linux-Device-Driver/PIR/"$$0) }' > /home/pi/Desktop/Clonning_Dir/Linux-Device-Driver/PIR/PIR.mod
